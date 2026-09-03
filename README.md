@@ -105,6 +105,20 @@ Authorization is separate from authentication: a user must first authenticate, t
 - Unknown roles being denied
 - Case-insensitive handling of the `admin` role
 
+## Activity 3 – Security Vulnerability Review and Remediation
+
+Microsoft Copilot was used to review the SafeVault codebase for SQL injection, XSS, input validation, authentication, and authorization issues.
+
+No SQL injection vulnerability was found. Dapper uses parameterized queries with `@Username`, and user input is not concatenated into SQL strings.
+
+No current XSS output sink exists because the project has no web or HTML layer. Existing validation tests reject common XSS payloads. If a web layer is added, output encoding will still be required; input validation is not a substitute for encoding.
+
+A design-level authorization risk was identified because `AuthenticatedUser` had a public constructor. The constructor was changed to `internal` so external callers cannot manufacture authenticated identities directly.
+
+Tests were added for invalid and near-admin roles, including roles such as `admin ` and `administrator`, which must not receive admin authorization. Existing SQL injection and XSS tests were reviewed and found adequate, so no unnecessary duplicate tests were added.
+
+The final test result is **46/46 tests passing**.
+
 ## Security Design
 
 The main security principles used are:
@@ -118,7 +132,7 @@ The main security principles used are:
 
 ## Testing
 
-The current test suite contains 44 NUnit test cases. All 44 tests pass.
+The current test suite contains 46 NUnit test cases. All 46 tests pass.
 
 Run the build with:
 
@@ -135,7 +149,7 @@ dotnet test
 Expected successful result:
 
 ```text
-44/44 tests passed
+46/46 tests passed
 ```
 
 ## Project Structure

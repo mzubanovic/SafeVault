@@ -25,6 +25,8 @@ public class TestAuthorization
     [TestCase("")]
     [TestCase("manager")]
     [TestCase("superuser")]
+    [TestCase("admin ")]
+    [TestCase("administrator")]
     public void UnknownOrMissingRolesAreDenied(string? role)
     {
         var user = role is null ? null : new AuthenticatedUser("marko123", role);
